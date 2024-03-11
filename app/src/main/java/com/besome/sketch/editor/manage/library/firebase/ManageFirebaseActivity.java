@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import com.google.android.material.materialswitch.MaterialSwitch;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,7 +49,7 @@ public class ManageFirebaseActivity extends BaseAppCompatActivity implements Vie
         }
     });
 
-    private MaterialSwitch libSwitch;
+    private Switch libSwitch;
     private TextView tvProjectId;
     private TextView tvAppId;
     private TextView tvApiKey;
