@@ -2197,7 +2197,7 @@ public class OldResourceIdMapper {
             case 2131166281:
                 return R.drawable.yellow_arrow_down;
             case 2131166282:
-                return R.drawable.bottom_shadow;
+                return R.drawable.img_nocontent;
             case 2131166283:
                 return R.drawable.ic_folder_128;
             case 2131166284:
@@ -2244,8 +2244,6 @@ public class OldResourceIdMapper {
                 return R.drawable.widget_fragment;
             case 2131166305:
                 return R.drawable.item_video_view;
-            case 2131166306:
-                return R.drawable.dummy_ae_462;
             case 2131166307:
                 return R.drawable.item_bottom_view;
             case 2131166308:
@@ -2268,8 +2266,6 @@ public class OldResourceIdMapper {
                 return R.drawable.ic_property_convert;
             case 2131166317:
                 return R.drawable.widget_badge_view;
-            case 2131166318:
-                return R.drawable.dummy_ae_46e;
             case 2131166319:
                 return R.drawable.item_badge_view;
             case 2131166320:

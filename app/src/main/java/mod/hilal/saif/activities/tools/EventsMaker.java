@@ -25,8 +25,8 @@ import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 
-import com.github.angads25.filepicker.model.DialogProperties;
-import com.github.angads25.filepicker.view.FilePickerDialog;
+import dev.trindadedev.lib.filepicker.model.DialogProperties;
+import dev.trindadedev.lib.filepicker.view.FilePickerDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.sketchware.remod.R;
@@ -105,7 +105,7 @@ public class EventsMaker extends Activity {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 0);
         newCard.addView(newLayout2);
-        makeup(newLayout2, 0x7f07043e, "Activity events", getNumOfEvents(""));
+        makeup(newLayout2, R.drawable.widget_source, "Activity events", getNumOfEvents(""));
         base.addView(newCard, 1);
         newLayout2.setOnClickListener(v -> {
             Intent intent = new Intent();

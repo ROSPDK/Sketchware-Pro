@@ -8,28 +8,25 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.NestedScrollView;
 
-import com.besome.sketch.editor.property.PropertySwitchItem;
 import com.besome.sketch.lib.base.BaseAppCompatActivity;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.sketchware.remod.R;
 
-import a.a.a.mB;
+import dev.trindadedev.lib.ui.components.preference.PreferenceSwitch;
 import mod.hey.studios.util.Helper;
 
 public class SystemSettingActivity extends BaseAppCompatActivity {
-
-    private LinearLayout contentLayout;
     private SharedPreferences.Editor preferenceEditor;
 
-    private void addPreference(int key, int resName, int resDescription, boolean value) {
-        PropertySwitchItem switchItem = new PropertySwitchItem(this);
-        switchItem.setKey(key);
-        switchItem.setName(Helper.getResString(resName));
-        switchItem.setDesc(Helper.getResString(resDescription));
-        switchItem.setValue(value);
-        contentLayout.addView(switchItem);
-    }
+    private LinearLayout content;
+    private NestedScrollView contentLayout;
+    private AppBarLayout appBarLayout;
+    private MaterialToolbar topAppBar;
+    private CollapsingToolbarLayout collapsingToolbar;
 
     @Override
     public void onBackPressed() {
@@ -42,44 +39,45 @@ public class SystemSettingActivity extends BaseAppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.system_settings);
+        setContentView(R.layout.prefences_content_appbar);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        findViewById(R.id.layout_main_logo).setVisibility(View.GONE);
-        getSupportActionBar().setTitle(Helper.getResString(R.string.main_drawer_title_system_settings));
-        toolbar.setNavigationOnClickListener(view -> {
-            if (!mB.a()) onBackPressed();
-        });
+        content = findViewById(R.id.content);
+        topAppBar = findViewById(R.id.topAppBar);
+        appBarLayout = findViewById(R.id.appBarLayout);
+        contentLayout = findViewById(R.id.contentLayout);
+        collapsingToolbar = findViewById(R.id.collapsingToolbar);
 
-        contentLayout = findViewById(R.id.content);
+        topAppBar.setTitle(R.string.main_drawer_title_system_settings);
+        topAppBar.setNavigationOnClickListener(view -> onBackPressed());
+        loadPreferences();
+    }
+
+    private void loadPreferences() {
         SharedPreferences preferences = getSharedPreferences("P12", Context.MODE_PRIVATE);
         preferenceEditor = preferences.edit();
 
-        addPreference(0, R.string.system_settings_title_setting_vibration,
-                R.string.system_settings_description_setting_vibration,
-                preferences.getBoolean("P12I0", true));
+        addPreference(0, R.string.system_settings_title_setting_vibration, R.string.system_settings_description_setting_vibration, preferences.getBoolean("P12I0", true));
+        addPreference(1, R.string.system_settings_title_automatically_save, R.string.system_settings_description_automatically_save, preferences.getBoolean("P12I2", false));
+    }
 
-        addPreference(1, R.string.system_settings_title_automatically_save,
-                R.string.system_settings_description_automatically_save,
-                preferences.getBoolean("P12I2", false));
+    private void addPreference(int key, int resName, int resDescription, boolean value) {
+        PreferenceSwitch preferenceSwitch = new PreferenceSwitch(this);
+        preferenceSwitch.setTitle(Helper.getResString(resName));
+        preferenceSwitch.setDescription(Helper.getResString(resDescription));
+        preferenceSwitch.setValue(value);
+
+        preferenceSwitch.setSwitchChangedListener((buttonView, isChecked) -> {
+            if (key == 0) {
+                preferenceEditor.putBoolean("P12I0", isChecked);
+            } else if (key == 1) {
+                preferenceEditor.putBoolean("P12I2", isChecked);
+            }
+        });
+
+        content.addView(preferenceSwitch);
     }
 
     private boolean saveSettings() {
-        for (int i = 0; i < contentLayout.getChildCount(); i++) {
-            View childAtView = contentLayout.getChildAt(i);
-            if (childAtView instanceof PropertySwitchItem) {
-                PropertySwitchItem propertySwitchItem = (PropertySwitchItem) childAtView;
-                if (0 == propertySwitchItem.getKey()) {
-                    preferenceEditor.putBoolean("P12I0", propertySwitchItem.getValue());
-                } else if (1 == propertySwitchItem.getKey()) {
-                    preferenceEditor.putBoolean("P12I2", propertySwitchItem.getValue());
-                }
-            }
-        }
-
         return preferenceEditor.commit();
     }
 }

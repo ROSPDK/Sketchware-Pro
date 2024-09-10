@@ -3,24 +3,23 @@ package mod.hey.studios.build;
 import static mod.SketchwareUtil.getDip;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 import com.sketchware.remod.R;
 
 import mod.SketchwareUtil;
-import mod.hey.studios.util.Helper;
+import mod.remaker.util.ThemeUtils;
 
 public class BuildSettingsDialog {
 
@@ -33,38 +32,25 @@ public class BuildSettingsDialog {
     }
 
     public void show() {
-        var builder = new AlertDialog.Builder(activity);
-
         var inflate = activity.getLayoutInflater().inflate(R.layout.project_config_layout, null);
-
-        ImageView icon = inflate.findViewById(R.id.project_config_icon);
-        TextView title = inflate.findViewById(R.id.project_config_title);
         LinearLayout contentView = inflate.findViewById(R.id.project_config_pref_layout);
-        TextView cancel = inflate.findViewById(R.id.text_cancel);
-        TextView save = inflate.findViewById(R.id.text_save);
-
-        icon.setImageResource(R.drawable.side_menu_setting_icon_over);
-        title.setText("Build Settings");
 
         View[] viewArr = {
                 addInputPref(BuildSettings.SETTING_ANDROID_JAR_PATH, "", "Custom android.jar", EditorInfo.TYPE_CLASS_TEXT, contentView),
-                addInputPref(BuildSettings.SETTING_CLASSPATH, "", "Classpath (separated by :)", EditorInfo.TYPE_CLASS_TEXT, contentView),
+                addInputPref(BuildSettings.SETTING_CLASSPATH, "", "Classpath 'separated by :'", EditorInfo.TYPE_CLASS_TEXT, contentView),
                 addSingleChoicePref(BuildSettings.SETTING_DEXER, new String[]{"Dx", "D8"}, "Dx", "Dexer", contentView),
                 addSingleChoicePref(BuildSettings.SETTING_JAVA_VERSION, BuildSettingsDialogBridge.getAvailableJavaVersions(), "1.7", "Java version", contentView),
                 addTogglePref(BuildSettings.SETTING_NO_WARNINGS, true, "Hide warnings in error log", contentView),
                 addTogglePref(BuildSettings.SETTING_NO_HTTP_LEGACY, false, "Don't include http-legacy-28.dex", contentView),
                 addTogglePref(BuildSettings.SETTING_ENABLE_LOGCAT, true, "Enable debug logcat logs viewable in Logcat Reader. Not enabled in exported AABs/APKs.", contentView)
         };
-
+        var builder = new MaterialAlertDialogBuilder(activity)
+                .setTitle("Build Settings")
+                .setIcon(R.drawable.ic_tune_24)
+                .setPositiveButton("Save", (dialogInterface, i) -> settings.setValues(viewArr))
+                .setNegativeButton("Cancel", null);
         builder.setView(inflate);
-
-        var buildSettingsDialog = builder.create();
-        buildSettingsDialog.show();
-        cancel.setOnClickListener(Helper.getDialogDismissListener(buildSettingsDialog));
-        save.setOnClickListener(v -> {
-            settings.setValues(viewArr);
-            buildSettingsDialog.dismiss();
-        });
+        builder.show();
     }
 
     private RadioGroup addSingleChoicePref(String key, String[] choices, String defaultValue, String title, LinearLayout addTo) {
@@ -75,7 +61,7 @@ public class BuildSettingsDialog {
                 ViewGroup.LayoutParams.WRAP_CONTENT));
         textView.setText(title);
         textView.setTextSize(14f);
-        textView.setTextColor(0xff008DCD);
+        textView.setTextColor(ThemeUtils.getColor(textView, R.attr.colorOnSurface));
         textView.setTypeface(null, Typeface.BOLD);
         textView.setPadding(
                 0,
@@ -103,7 +89,7 @@ public class BuildSettingsDialog {
             radioButton.setLayoutParams(layoutParams);
             radioButton.setId(View.generateViewId());
             radioButton.setText(choice);
-            radioButton.setTextColor(0xff000000);
+            radioButton.setTextColor(ThemeUtils.getColor(radioButton, R.attr.colorOnSurface));
             radioButton.setTextSize(16f);
 
             if (settings.getValue(key, defaultValue).equals(choice)) {
@@ -143,7 +129,7 @@ public class BuildSettingsDialog {
         String value = settings.getValue(key, defaultValue ? "true" : "false");
         checkBox.setText(label);
         checkBox.setChecked(value.equals("true"));
-        checkBox.setTextColor(0xff000000);
+        checkBox.setTextColor(ThemeUtils.getColor(checkBox, R.attr.colorOnSurface));
         checkBox.setPadding(
                 (int) getDip(4),
                 (int) getDip(8),
@@ -165,7 +151,6 @@ public class BuildSettingsDialog {
 
     private EditText addInputPref(String key, String defaultValue, String hint, int inputType, LinearLayout addTo) {
         TextInputLayout textInputLayout = new TextInputLayout(activity);
-
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -175,9 +160,7 @@ public class BuildSettingsDialog {
                 0,
                 0
         );
-
         textInputLayout.setLayoutParams(layoutParams);
-
         addTo.addView(textInputLayout);
 
         EditText editText = new EditText(activity);
@@ -191,9 +174,9 @@ public class BuildSettingsDialog {
                 (int) getDip(8)
         );
         editText.setTextSize(16f);
-        editText.setTextColor(0xff000000);
+        editText.setTextColor(ThemeUtils.getColor(editText, R.attr.colorOnSurface));
         editText.setHint(hint);
-        editText.setHintTextColor(0xff607d8b);
+        editText.setHintTextColor(ThemeUtils.getColor(editText, R.attr.colorPrimary));
         editText.setText(settings.getValue(key, defaultValue));
         editText.setTag(key);
         editText.setInputType(inputType);
